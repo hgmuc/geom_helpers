@@ -124,6 +124,7 @@ def get_dist_from_linestring(lstr: str) -> float | None:
     '''
     if str(lstr).startswith("MULTILINE"):
         return get_dist_from_multilinestring(lstr)
+    
     nodes = [(float(xy[1]), float(xy[0])) for xy in [n.split(" ") for n in str(lstr)[12:-1].split(", ")]]
     
     total_dist = sum([get_dist(pt1, pt2) for pt1, pt2 in zip(nodes[:-1], nodes[1:])])
