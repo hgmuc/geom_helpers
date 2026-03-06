@@ -4,7 +4,7 @@ Basic utility functions for cell code and reg code data and derived constructs
 
 Based on [ChatGPT](https://chatgpt.com/c/69a1dba3-ae90-8325-a164-37453193599c)
 
-## Requires
+## Requirements
 
 - Pandas>=2.2.2
 - Numpy>=1.26.4
@@ -32,7 +32,21 @@ There are still problems with the venv setup.
 -   The only Python version available 3.8.x.
 -   GitHub Copilot found mainly conda, not venv or uv.
 
+### Pytest
+
+- Run **pytest** from package root
+
+#### Check test coverage: 
+- Run pytest --cov=geom_helpers.osm_reader_helper --cov-report=term-missing
+- shows % of "statements" checked
+- list all statements (by line number) which are missing in any given module
+
 ### CI
+
+- Local CI is done when changes are committed locally (**only if pre-commit install was run before**)
+- Remote CI (on GitHub) is done when committed changes are pushed upstream thanks to GitHub Actions
+  - see settings in .github/workflows/ci.yml
+  - see also settings in pyproject.toml
 
 #### Remote: GitHub Actions
 
