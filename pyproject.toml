@@ -9,13 +9,15 @@ description = "Basic utility functions for cell code and reg code data and deriv
 readme = "README.md"
 requires-python = ">=3.10"
 # "shapely>=2.0.0", "numpy>=1.26.4", "pandas>=2.2.2", "geopandas>=1.0.1", "sqlite3>3.46.0"
+# "basic_helpers @ git+https://github.com/you/basic_helpers.git@v0.1.0"
 dependencies = ["shapely>=2.0.0", "numpy>=1.26.4", "pandas>=2.2.2", "numba>=0.51.2", 
-                "basic_helpers @ git+https://github.com/you/basic_helpers.git@v0.1.0"]  # only Numpy, Pandas and custom packages; not Python standard libraries like gzip, zipfile, ...
+                "basic_helpers"]  # only Numpy, Pandas and custom packages; not Python standard libraries like gzip, zipfile, ...
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
     "pytest-cov",
+    "pytest-mock",
     "ruff",
 ]  # use locally with venv pip install -e .[dev]  OR   pip install -e .[dev,typecheck]
 typecheck = ["mypy"]
