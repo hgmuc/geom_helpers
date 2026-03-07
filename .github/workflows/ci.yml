@@ -32,7 +32,7 @@ jobs:
       # Step 2: Install geom_helpers and its dev tools
       # Note: We keep this to ensure all [dev] and [typecheck] tools are present
       - name: Install package in editable mode
-        run: pip install -e .[dev,typecheck] --no-deps
+        run: pip install -e .[dev,typecheck]
 
       # Step 3: Run your tests as before
       - name: Run tests
