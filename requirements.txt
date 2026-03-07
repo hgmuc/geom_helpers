@@ -1,2 +1,2 @@
---find-links https://github.com/you/basic_helpers/releases
+--find-links https://github.com/hgmuc/basic_helpers/releases
 -e .
