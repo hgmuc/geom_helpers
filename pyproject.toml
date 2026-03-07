@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "basic_helpers"
+name = "geom_helpers"
 dynamic = ["version"]
 # version = "0.1.0"   replaced by dynamic
 description = "Basic utility functions for cell code and reg code data and derived constructs; distance and bearing helper functions"
