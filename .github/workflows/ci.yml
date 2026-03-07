@@ -18,16 +18,21 @@ jobs:
         with:
           python-version: "3.10"
 
-      # Step 1: Install dependencies using requirements.txt to catch --find-links
-      - name: Install dependencies from requirements
+      # Step 0: Git Authentication
+      - name: Configure git authentication
         run: |
-          # We rewrite the URL on the fly using the token
-          pip install --find-links https://x-access-token:${GH_TOKEN}@github.com/hgmuc/basic_helpers/releases -r requirements.txt
+          git config --global url."https://x-access-token:${GH_TOKEN}@github.com/".insteadOf "https://github.com/"      
+      
+      # Step 1: Install dependencies using requirements.txt to catch --find-links
+      #- name: Install dependencies from requirements => NOT RECOMMENDED
+      #  run: |
+      #    # We rewrite the URL on the fly using the token
+      #    pip install --find-links https://x-access-token:${GH_TOKEN}@github.com/hgmuc/basic_helpers/releases -r requirements.txt
 
       # Step 2: Install geom_helpers and its dev tools
       # Note: We keep this to ensure all [dev] and [typecheck] tools are present
       - name: Install package in editable mode
-        run: pip install -e --no-deps .[dev,typecheck]
+        run: pip install -e .[dev,typecheck] --no-deps
 
       # Step 3: Run your tests as before
       - name: Run tests
