@@ -1,2 +1,0 @@
---find-links https://github.com/hgmuc/basic_helpers/releases
--e .
