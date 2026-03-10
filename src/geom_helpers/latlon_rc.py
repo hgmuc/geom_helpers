@@ -45,7 +45,7 @@ def get_base_latlon_cana(x: Coordinate) -> CoordinateInt: # type: ignore
 def base_default_func(x: Coordinate) -> CoordinateInt:
     return (int(x[0]), floor(x[1]))
 
-def get_num_rows_cols(lat: CoordVal, lon: CoordVal) -> SubRCConfig:
+def get_num_rows_cols(lat: int, lon: int) -> SubRCConfig:
     base_func: BaseFunc = base_default_func
     if (lat, lon) in MEDI_CELLS:
         grid_num_w, grid_num_h = LAT_RC_GRID_MAP[lat]
