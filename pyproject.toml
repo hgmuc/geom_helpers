@@ -26,6 +26,8 @@ typecheck = ["mypy"]
 
 [project.scripts]
 geom-tileserver = "geom_helpers.tileserver.tileserver2:main"
+# Users now can just run: geom-tileserver
+# for more details about the CLI endpoint and requirements for testing the server see: https://chatgpt.com/c/69c2d3a0-3a58-832a-892f-792e8230ee8d
 
 [tool.setuptools.packages.find]
 where = ["src"]
