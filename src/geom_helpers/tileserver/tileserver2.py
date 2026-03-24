@@ -148,23 +148,22 @@ class CustomCORSRequestHandler(CORSRequestHandler):
 #class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 #    pass
 
+def main():
+    Handler = CustomCORSRequestHandler
+    Handler.directory = TILES_DIRECTORY
 
+    #generate_tile_index()
+    #write_mvt_tiles()
 
-Handler = CustomCORSRequestHandler
-Handler.directory = TILES_DIRECTORY
-
-
-#generate_tile_index()
-#write_mvt_tiles()
+    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        print(f"serving at port {PORT}")
+        #os.chdir(TILES_DIRECTORY)  # Replaced by safe Handler.directory = TILES_DIRECTORY above
+        print("Current directory", Handler.directory)  
+        httpd.serve_forever()
 
 
 if __name__ == "__main__":
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        print(f"serving at port {PORT}")
-        os.chdir(TILES_DIRECTORY)
-        print("CWD", os.getcwd())
-        httpd.serve_forever()
-
+    main()
 
 
 '''
