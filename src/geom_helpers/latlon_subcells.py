@@ -5,7 +5,7 @@ from itertools import product
 from geom_helpers.osm_reader_helper import get_coord_code, get_rev_coord_code, InvalidCoordinateError
 from geom_helpers.distance_helper import get_dist
 from geom_helpers.latlon_code import get_reg_cell_code
-from typing import Any
+from typing import Any, cast
 
 from basic_helpers.types_base import Coordinate, FlexNumeric
 from basic_helpers.config_reg_code import Cell, Subcell
@@ -148,7 +148,7 @@ def get_subcells_in_circle(center_pt: Coordinate, radius: FlexNumeric = 10000,
     for cell in subcell_dict:
         new_ls = []
         for subcell in subcell_dict[cell]:
-            subcenter_pt = tuple([x+0.05 for x in get_rev_coord_code(cell+subcell)])
+            subcenter_pt = cast(Coordinate, tuple([x+0.05 for x in get_rev_coord_code(cell+subcell)]))
             if get_dist(center_pt, subcenter_pt) < radius:
                 new_ls.append(subcell)
         subcell_dict[cell] = set(new_ls)
@@ -170,13 +170,13 @@ def get_subcells_in_polygon(poly):
     subcell_dict = get_subcells_in_bbox((lat_s, lon_w), (lat_n, lon_o))
     
     for cell in subcell_dict:
-        new_ls = []
+        new_subcells = set()
         for subcell in subcell_dict[cell]:
             subcenter_pt = tuple([x+0.05 for x in get_rev_coord_code(cell+subcell)])
             if point_inside_polygon(subcenter_pt, poly):
-                new_ls.append(subcell)
+                new_subcells.add(subcell)
                 
-        subcell_dict[cell] = new_ls.copy()
+        subcell_dict[cell] = new_subcells.copy()
         
     subcell_dict = {k: v for k, v in subcell_dict.items() if len(v) > 0}
     
