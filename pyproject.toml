@@ -24,6 +24,9 @@ dev = [
 ]  # use locally with venv pip install -e .[dev]  OR   pip install -e .[dev,typecheck]
 typecheck = ["mypy"]
 
+[project.scripts]
+geom-tileserver = "geom_helpers.tileserver.tileserver2:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
