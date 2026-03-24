@@ -8,14 +8,13 @@ from numba import njit
 from typing import Callable, cast
 
 from basic_helpers.types_base import CoordinateInt, Coordinate, CoordVal, FlexNumeric
-from basic_helpers.config_reg_code import Cell, RegCode, ParamsKey, CellParams
+from basic_helpers.config_reg_code import Cell, RegCode, ParamsKey, CellParams, RC
 
 LatInt = int
 LonInt = int
 
 BaseFunc = Callable[[Coordinate], CoordinateInt]
 
-RC = tuple[int, int]
 GridWH = tuple[int, int]
 RCGridMap = dict[LatInt, RC]
 RCGridNghbrs = dict[GridWH, dict[RC, list[list[RC]]]]
@@ -85,12 +84,12 @@ def get_num_rows_cols(lat: int, lon: int) -> SubRCConfig:
             params['x1'], params['y1'], params['n_lttr1'], params['n_lttr2'], params_key)
 
 
-def get_sub_rc(lat: CoordVal, lon: CoordVal):
+def get_sub_rc(lat: CoordVal, lon: CoordVal) -> RC:
     grid_num_w, grid_num_h, num_rows, num_cols, base_func, param_x1, param_y1, param_n1, param_n2 = cast(SubRCConfig, NUM_ROWS_COLS[(int(lat), floor(lon))])[:9]
     base_lat, base_lon = base_func((lat,lon))
     return compute_sub_rc(lat, lon, grid_num_w, grid_num_h, num_rows, num_cols, param_x1, param_y1, param_n1, param_n2, base_lat, base_lon)
 
-def get_sub_rc_code(lat: CoordVal, lon: CoordVal):
+def get_sub_rc_code(lat: CoordVal, lon: CoordVal) -> RegCode:
     grid_num_w, grid_num_h, num_rows, num_cols, base_func, param_x1, param_y1, param_n1, param_n2 = cast(SubRCConfig, NUM_ROWS_COLS[(int(lat), floor(lon))])[:9]
     base_lat, base_lon = base_func((lat,lon))
     code = get_reg_cell_code(lat, lon)
@@ -211,10 +210,10 @@ LAT_RC_GRID_MAP_CANA: RCGridMap = {26: (9, 9), 27: (9, 9), 28: (9, 9), 29: (9, 9
 LAT_RC_GRID_MAP_MADE: RCGridMap = {32: (9, 9), 33: (9, 9)}
 
 # Durch TOTAL_CELLS muss rückwärts iteriert werden, damit bei Überschneidungen die richtige Region zugewiesen wird
-NUM_ROWS_COLS: dict[CoordinateInt, tuple[int, int]] = {
+NUM_ROWS_COLS: dict[CoordinateInt, SubRCConfig] = {
     (lat, lon): get_num_rows_cols(lat, lon) for lat, lon in sorted(TOTAL_CELLS)[::-1]    # type: ignore
     if get_num_rows_cols(lat, lon)}
-NUM_ROWS_COLS_BY_CELL: dict[Cell, tuple[int, int]] = {
+NUM_ROWS_COLS_BY_CELL: dict[Cell, SubRCConfig] = {
     get_coord_cell(k[0], k[1]): v for k, v in NUM_ROWS_COLS.items()}
 
 '''
