@@ -1,3 +1,4 @@
+# type: ignore
 import unittest
 
 from geom_helpers.latlon_rc import NUM_ROWS_COLS_BY_CELL #, NUM_ROWS_COLS

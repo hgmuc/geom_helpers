@@ -1,3 +1,4 @@
+# type: ignore
 import pytest
 from shapely.geometry import Point, LineString, MultiLineString
 from geom_helpers.distance_helper import (

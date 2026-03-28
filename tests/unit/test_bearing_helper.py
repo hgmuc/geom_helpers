@@ -25,8 +25,8 @@ class TestBearingHelper:
         pt1 = (48.1371, 11.5761, 520) # Munich
         pt2 = (52.5200, 13.4050, 34)  # Berlin
         # Result should be roughly North-North-East (~14-15 degrees)
-        result = get_bearing(pt1, pt2)
-        print(pt1, pt2, get_bearing(pt1, pt2))
+        result = get_bearing(pt1, pt2)   # type: ignore
+        print(pt1, pt2, get_bearing(pt1, pt2))  # type: ignore
         assert 14 <= result <= 15
         assert isinstance(result, float)
 
@@ -34,7 +34,7 @@ class TestBearingHelper:
         """Verify the string formatting in get_track_bearings."""
         track = [(0.0, 0.0), (1.0, 0.0), (1.0, 1.0)]
         # 0.0 (North), 90.0 (East)
-        results = get_track_bearings(track)
+        results = get_track_bearings(track) # type: ignore
         
         assert len(results) == 2
         assert results[0].strip() == "0.00"
@@ -46,7 +46,7 @@ class TestBearingHelper:
     def test_get_track_bearings_printout(self, capsys):
         """Test that printout=True actually prints to stdout."""
         track = [(0.0, 0.0), (1.0, 0.0)]
-        get_track_bearings(track, printout=True)
+        get_track_bearings(track, printout=True)   # type: ignore
         captured = capsys.readouterr()
         assert "===>" in captured.out
         assert "0.00" in captured.out
@@ -55,7 +55,7 @@ class TestBearingHelper:
         """Verify numeric list return and rounding."""
         track = [(0.0, 0.0), (0.0, 1.0), (1.0, 1.0)]
         # East (90.0), North (0.0)
-        results = get_track_bearings_num(track)
+        results = get_track_bearings_num(track)   # type: ignore
         
         assert results == [90.0, 0.0]
         assert isinstance(results[0], float)
