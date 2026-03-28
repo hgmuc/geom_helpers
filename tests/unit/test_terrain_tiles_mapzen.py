@@ -33,7 +33,7 @@ class TestTerrainMapzen:
 
     @patch("geom_helpers.tiles.terrain_tiles_mapzen.os.path.exists")
     @patch("geom_helpers.tiles.terrain_tiles_mapzen.check_path")
-    def test_create_terrain_tile_path_failure(self, mock_check, mock_exists):
+    def test_create_terrain_tile_path_failure(self, mock_check):
         """Tests that if base path check fails, function returns False."""
         mock_check.return_value = False
         
