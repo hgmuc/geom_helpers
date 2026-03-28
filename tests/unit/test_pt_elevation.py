@@ -43,17 +43,33 @@ def sample_elevations():
         [700, 800, 900]
     ], dtype=np.int16)
 
+#@pytest.fixture
+#def dummy_hgt_file(tmp_path):
+#    """Creates a small valid SRTM dummy file (1201x1201)."""
+#    srtm_dir = tmp_path / "SRTM2"
+#    srtm_dir.mkdir()
+#    file_path = srtm_dir / "N52E013.hgt"
+    
+#    # Create a 1201x1201 array of 500m elevation
+#    data = np.full((1201, 1201), 500, dtype='>i2')
+#    data.tofile(file_path)
+#    return str(srtm_dir)
+
 @pytest.fixture
 def dummy_hgt_file(tmp_path):
     """Creates a small valid SRTM dummy file (1201x1201)."""
+    # Use / operator with tmp_path (which is a Path object)
     srtm_dir = tmp_path / "SRTM2"
-    srtm_dir.mkdir()
+    srtm_dir.mkdir(parents=True, exist_ok=True) # parents=True is safer
     file_path = srtm_dir / "N52E013.hgt"
     
     # Create a 1201x1201 array of 500m elevation
     data = np.full((1201, 1201), 500, dtype='>i2')
     data.tofile(file_path)
-    return str(srtm_dir)
+    
+    # Return the Path object directly if possible, or a normalized string
+    return str(srtm_dir.resolve())
+
 
 def test_get_file_name_positive(dummy_hgt_file):
     with patch('geom_helpers.elevation.pt_elevation.get_srtm_files_directory', return_value=dummy_hgt_file):
@@ -125,7 +141,8 @@ def test_get_elevation_from_tile():
 def test_filename_logic(lat, lon, expected_file, tmp_path):
     with patch('geom_helpers.elevation.pt_elevation.get_srtm_files_directory', return_value=str(tmp_path)):
         # Mock file existence so it returns the string
-        with patch('os.path.isfile', return_value=True):
+        #with patch('os.path.isfile', return_value=True):
+        with patch('geom_helpers.elevation.pt_elevation.Path.exists', return_value=True):
             res = get_file_name(lat, lon)
             print("res", res, expected_file)
             assert expected_file in res

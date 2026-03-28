@@ -2,6 +2,7 @@ import os
 import numpy as np
 from scipy import interpolate
 from numba import njit
+from pathlib import Path
 from typing import Literal
 
 from basic_helpers.file_helper import do_pickle
@@ -37,11 +38,13 @@ def get_file_name(lat: CoordVal, lon: CoordVal) -> str | None:
         lon = np.abs(lon) + 1
 
     hgt_file = "{}{:02d}{}{:03d}.hgt".format(ns, int(lat), ew, int(lon))
-    hgt_file_path = os.path.join(srtm_files_dir, hgt_file)
-    if os.path.isfile(hgt_file_path):
-        return hgt_file_path.replace("/", "\\")
+    hgt_file_path = Path(srtm_files_dir) / hgt_file
+    
+    if hgt_file_path.exists():
+        return str(hgt_file_path)
     else:
         return None
+
 
 def get_elevation_arr(lat: CoordVal, lon: CoordVal, DIMS: int = 1201) -> ElevArr | None:
     '''
