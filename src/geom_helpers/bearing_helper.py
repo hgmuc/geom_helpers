@@ -15,10 +15,9 @@ def get_bearing(pt1: Coordinate, pt2: Coordinate) -> float:
     * liefert Richtung in Grad, um vom Ausgangspunkt - Zielpunkt zu gelangen
     * sämtliche Gradangaben werden dabei für die Berechnung in Radians umgewandelt
     '''    
-    pt1 = pt1[:2]
-    pt2 = pt2[:2]
-    lat1, lon1  = pt1
-    lat2, lon2  = pt2
+
+    lat1, lon1  = pt1[:2]
+    lat2, lon2  = pt2[:2]
     if lat1 == lat2 and lon1 == lon2:
         return 0
     
