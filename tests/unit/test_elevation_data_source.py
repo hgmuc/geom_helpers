@@ -314,6 +314,7 @@ class TestElevationDataFromTiles:
             filefmt='png', 
             dim=256, 
             try_download=False, 
+            path='tests/data',
             zoom_lvls=[2]
         )
 
