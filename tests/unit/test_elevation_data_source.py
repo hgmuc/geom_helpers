@@ -471,7 +471,7 @@ class TestCopernicusLogic:
         """Tests that cp30 falls back to cp90 if cp30 can't load data."""
         cp90 = CopernicusData(res=90, dim=1200, try_download=True, path=str(tmp_path))
         
-        cp30 = CopernicusData(res=30, dim=3600, fallbackDemSrc=cp90)
+        cp30 = CopernicusData(res=30, dim=3600, fallbackDemSrc=cp90, path=str(tmp_path))
         
         elev = cp30.get_elevation(40.96, 0.73)
         assert elev is not None
