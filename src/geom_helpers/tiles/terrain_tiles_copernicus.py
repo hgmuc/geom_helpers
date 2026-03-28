@@ -1,5 +1,4 @@
 import os
-import math
 import numpy as np
 # import numpy.typing as npt
 from shapely.geometry import Point #, Polygon
@@ -27,18 +26,27 @@ SrtmDataDict = dict[str, ElevArr]
 
 
 def init_existing_srtm_dict() -> SrtmLatLonMap:
-    EXISTING_SRTM = {(int(f[1:3]), int(f[4:7]), 90): os.path.join("C:/SRTM2", f) for f in os.listdir("C:/SRTM2")}
-    for res in [30, 90]:
-        for f in os.listdir(os.path.join(ELEV_DATA_PATH, "copernicus", str(res))):
-            key1 = int(f[23:25]) * (-1 if f[22] == 'S' else 1)
-            key2 = int(f[30:33]) * (-1 if f[29] == 'W' else 1)
-            #print(key1, key2, res, "\t", os.path.join(ELEV_DATA_PATH, "copernicus", str(res), f))
-            EXISTING_SRTM[(key1, key2, res)] = os.path.join(ELEV_DATA_PATH, "copernicus", str(res), f)
+    if os.path.exists("C:/SRTM2"):
+        EXISTING_SRTM = {(int(f[1:3]), int(f[4:7]), 90): os.path.join("C:/SRTM2", f) for f in os.listdir("C:/SRTM2")}
+        
+        if os.path.exists(os.path.join(ELEV_DATA_PATH, "copernicus")):
+            for res in [30, 90]:
+                for f in os.listdir(os.path.join(ELEV_DATA_PATH, "copernicus", str(res))):
+                    key1 = int(f[23:25]) * (-1 if f[22] == 'S' else 1)
+                    key2 = int(f[30:33]) * (-1 if f[29] == 'W' else 1)
+                    #print(key1, key2, res, "\t", os.path.join(ELEV_DATA_PATH, "copernicus", str(res), f))
+                    EXISTING_SRTM[(key1, key2, res)] = os.path.join(ELEV_DATA_PATH, "copernicus", str(res), f)
+    else:
+        EXISTING_SRTM = {}
 
     return cast(SrtmLatLonMap, EXISTING_SRTM)
 
 EXISTING_SRTM = init_existing_srtm_dict()
-SRTM_DATA_DICT = do_unpickle("C:/01_AnacondaProjects/osmium/SRTM_DATA_DICT.pkl")
+
+if os.path.exists("C:/01_AnacondaProjects/bikesite/SRTM_DATA_DICT.pkl"):
+    SRTM_DATA_DICT = do_unpickle("C:/01_AnacondaProjects/bikesite/SRTM_DATA_DICT.pkl")
+else:
+    SRTM_DATA_DICT = {}
 
 def get_aws_copernius_file_url(res: int = 90, lat: str = 'N48', lon: str = 'E012') -> str:
     res_arcsec = res//3
@@ -230,67 +238,6 @@ def align_arr_size(elev_arr, DIM, dims) -> tuple[ElevArr, int, int, list[int]]:
     DIM, W_ARR = elev_arr.shape
     dims[-1] = DIM
     return elev_arr, DIM, W_ARR, dims
-
-def get_slice2(elev_arr: ElevArr, bbox: BBox, pos_idx: int, n_quads: int, SRTM_DATA_DICT: SrtmDataDict) -> ElevArr | None:
-    DIM, W_ARR = elev_arr.shape
-    
-    if DIM == 10:
-        elev_arr = np.repeat(np.repeat(elev_arr, 120, axis=1), 120, axis=0)
-        DIM, W_ARR = elev_arr.shape
-    
-    if W_ARR < DIM:
-        fct = math.ceil(DIM / W_ARR)
-        new_width = W_ARR * fct
-        elev_arr = np.repeat(elev_arr, fct, axis=1)[:, (new_width-DIM)//2:-(new_width-DIM)//2]
-        
-    ADDITIONAL_RC = DIM % 100
-    lat1, lon1, lat2, lon2 = bbox
-    
-    if lat1 < 0:
-        lat1 = np.abs(floor(lat1) - lat1 + ceil(lat1))
-    if lat2 < 0:
-        lat2 = np.abs(floor(lat2) - lat2 + ceil(lat2))
-        
-    if lon1 < 0:
-        lon1 = np.abs(floor(lon1) - lon1 + ceil(lon1))
-        
-    if lon2 <= 0:
-        lon2 -= 1e-6
-        lon2 = np.abs(floor(lon2) - lon2 + ceil(lon2))
-        
-
-    y1 = int(floor((1 - (lat1 - int(lat1))) * DIM))
-    y2 = int(ceil((1 - (lat2 - int(lat2))) * DIM))
-    x1 = int(floor((lon1 - int(lon1)) * DIM))
-    x2 = int(ceil((lon2 - int(lon2)) * DIM))
-    
-    if n_quads == 1:
-        return elev_arr[y2:y1+1, x1:x2+1]
-        
-    elif n_quads == 2 and int(lat1) == int(lat2):
-        if pos_idx == 0:
-            return elev_arr[y2:y1+1-ADDITIONAL_RC, x1:DIM+1-ADDITIONAL_RC]
-        elif pos_idx == 1:
-            return elev_arr[y2:y1+1-ADDITIONAL_RC, :x2]
-        
-    elif n_quads == 2 and int(lon1) == int(lon2):
-        if pos_idx == 0:
-            return elev_arr[ADDITIONAL_RC:y1+1, x1:x2+1-ADDITIONAL_RC]
-        elif pos_idx == 1:
-            return elev_arr[y2:, x1:x2+1-ADDITIONAL_RC]
-
-    elif n_quads == 4:
-        if pos_idx == 0:
-            return elev_arr[ADDITIONAL_RC:y1+1+ADDITIONAL_RC, x1:DIM-ADDITIONAL_RC]
-        elif pos_idx == 1:
-            return elev_arr[ADDITIONAL_RC:y1+1+ADDITIONAL_RC, :x2+1]
-        elif pos_idx == 2:
-            return elev_arr[y2:, x1:DIM-ADDITIONAL_RC]
-        elif pos_idx == 3:
-            return elev_arr[y2:, :x2+1]
-        
-    #else:
-    return None
 
 def compose_elev_arr_slices(arr_slices: dict[int, ElevArr | None]) -> ElevArr | None:
     W = H = 0
